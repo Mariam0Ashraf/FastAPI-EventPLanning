@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from db import checkConnection
+from core.config import checkConnection
 
 app = FastAPI()
 
