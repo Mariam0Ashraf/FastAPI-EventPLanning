@@ -1,0 +1,72 @@
+<div class="auth-main">
+  <div class="auth-wrapper version-1">
+    <div class="auth-form">
+      <div class="auth-background">
+        <div class="yellow-circle"></div>
+        <div class="red-circle"></div>
+      </div>
+      <div class="main-form">
+        <app-card [showHeader]="false" class="auth-form-card" [padding]="40">
+          <div class="text-center">
+            <h1>Event Planner</h1>
+          </div>
+
+          <h4 class="text-center m-b-25 f-20 f-w-500">Login to your account</h4>
+
+          <div class="col-12">
+            <label for="email" class="f-w-500">Email</label>
+            <mat-form-field appearance="outline" class="w-100 m-t-5">
+              <input
+                matInput
+                type="email"
+                placeholder="Enter your email"
+                [(ngModel)]="email"
+                name="email"
+                required
+              />
+            </mat-form-field>
+          </div>
+
+          <div class="col-12">
+            <label for="password" class="f-w-500">Password</label>
+            <mat-form-field appearance="outline" class="w-100 m-t-5">
+              <input
+                matInput
+                [type]="hide ? 'password' : 'text'"
+                placeholder="Enter your password"
+                [(ngModel)]="password"
+                name="password"
+                required
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hide = !hide"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide"
+              >
+                <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div class="grid">
+            <button
+              mat-flat-button
+              color="primary"
+              class="b-rad-20 m-t-15"
+              (click)="login()"
+            >
+              Login
+            </button>
+          </div>
+
+          <div class="check-me m-t-15 text-center">
+            <h6 class="f-w-400 text-muted m-b-0">Don't have an account?</h6>
+            <a class="text-primary-500" [routerLink]="['/auth/register']">Register Here</a>
+          </div>
+        </app-card>
+      </div>
+    </div>
+  </div>
+</div>
