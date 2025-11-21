@@ -1,13 +1,14 @@
-import logging
-
-from repositories.user_repository import createUser, findUserByEmail
+from repositories.user_repository import findUserByEmail, createUser
 from core.security import hashPassword, checkPassword
+from core.jwt_handler import create_access_token
+import logging
 
 
 async def registerUser(username: str, email: str, password: str):
     existingUser = await findUserByEmail(email)
     if existingUser:
         return {"error": "User already exists"}
+
     try:
         hashedPass = hashPassword(password)
         userData = {"username": username, "email": email, "password": hashedPass}
@@ -20,10 +21,22 @@ async def registerUser(username: str, email: str, password: str):
 
 async def loginUser(email: str, password: str):
     user = await findUserByEmail(email)
+
     if not user:
         return {"error": "User Not Found", "code": 404}
-    elif checkPassword(password=password, hashed_password=user.password):
-        return {"user": user}
-    else:
+
+    if not checkPassword(password=password, hashed_password=user.password):
         return {"error": "These credentials do not match our records", "code": 400}
 
+    token_data = {"sub": str(user.id), "email": user.email}
+    access_token = create_access_token(token_data)
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": str(user.id),
+            "username": user.username,
+            "email": user.email
+        }
+    }
