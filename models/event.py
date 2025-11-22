@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, BeforeValidator
 from typing import Optional
 from bson import ObjectId
 from typing_extensions import Annotated
+from typing import List
 
 
 class Event(BaseModel):
