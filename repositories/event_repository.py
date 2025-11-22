@@ -13,23 +13,35 @@ async def createEvent(eventData: dict):
 
 
 async def findEventsByUser(user_id: str):
-    cursor = eventsCollection.find({"created_by": user_id})
+    cursor = eventsCollection.find({
+        "$or": [
+            {"created_by": user_id},
+            {"collaborators": user_id}
+        ]
+    })
+
     events = []
     async for event in cursor:
         events.append(Event(**event))
+
     return events
+
 
 async def deleteEventById(event_id: str, user_id: str):
     result = await eventsCollection.delete_one({
         "_id": ObjectId(event_id),
-        "created_by": user_id
+        "$or": [
+            {"created_by": user_id},
+            {"collaborators": user_id}
+        ]
     })
-
     return result.deleted_count
 
 async def findEventById(event_id: str):
     event = await eventsCollection.find_one({"_id": ObjectId(event_id)})
-    return event
+    if event:
+        return Event(**event)
+    return None
 
 async def addUserToEvent(event_id: str, user_id: str):
     result = await eventsCollection.update_one(
@@ -45,3 +57,12 @@ async def findEventsInvitedTo(user_id: str):
     async for event in cursor:
         events.append(Event(**event))
     return events
+
+
+async def updateEvent(event_id: str, update_data: dict):
+    await eventsCollection.update_one(
+        {"_id": ObjectId(event_id)},
+        {"$set": update_data}
+    )
+    updated = await eventsCollection.find_one({"_id": ObjectId(event_id)})
+    return Event(**updated)

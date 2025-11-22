@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from core.deps import get_current_user
-from requests.event_requests import CreateEventRequest, InviteUserRequest
+from requests.event_requests import CreateEventRequest, InviteUserRequest, InviteCollaboratorRequest
 from services.event_service import createEventService, getUserEventsService, deleteEventService, inviteUserToEvent, \
-    getInvitedEventsService
+    getInvitedEventsService, inviteCollaborator
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
@@ -42,7 +42,7 @@ async def delete_event(
 
     return result
 
-@router.post("/invite")
+@router.post("/invite-attendee")
 async def invite_user(
     request: InviteUserRequest,
     current_user: dict = Depends(get_current_user)
@@ -62,3 +62,19 @@ async def invite_user(
 async def invited_events(current_user: dict = Depends(get_current_user)):
     events = await getInvitedEventsService(current_user["user_id"])
     return {"invited_events": events}
+
+@router.post("/invite-collaborator")
+async def invite_collaborator(
+    request: InviteCollaboratorRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    result = await inviteCollaborator(
+        event_id=request.event_id,
+        inviter_id=current_user["user_id"],
+        email=request.email
+    )
+
+    if "error" in result:
+        return {"error": result["error"]}
+
+    return result

@@ -10,3 +10,7 @@ class CreateEventRequest(BaseModel):
 class InviteUserRequest(BaseModel):
     event_id: str
     email: str
+
+class InviteCollaboratorRequest(BaseModel):
+    event_id: str
+    email: str

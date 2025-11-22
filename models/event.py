@@ -16,6 +16,8 @@ class Event(BaseModel):
 
     created_by: str
     invited_users: List[str] = []
+    attendees: List[str] = []
+    collaborators: List[str] = []
 
     class Config:
         populate_by_name = True
