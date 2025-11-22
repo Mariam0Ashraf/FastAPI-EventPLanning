@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import checkConnection
 from routes import auth_routes
+from routes import protected_routes
+from routes import event_routes
 
 app = FastAPI()
 
@@ -25,3 +27,6 @@ async def home():
         return {"MongoDB connected successfully"}
     else:
         return {"MongoDB connection failed"}
+
+app.include_router(protected_routes.router)
+app.include_router(event_routes.router)
