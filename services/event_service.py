@@ -85,6 +85,7 @@ async def inviteCollaborator(event_id: str, inviter_id: str, email: str):
 
     return {"message": "Collaborator added", "event": updatedEvent}
 
+
 def isOrganizer(event, user_id: str):
     return (
         event.created_by == user_id or

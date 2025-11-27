@@ -2,6 +2,7 @@ from bson import ObjectId
 
 from core.config import db
 from models.event import Event
+from requests.event_requests import InvitationStatus
 
 eventsCollection = db["events"]
 
@@ -43,16 +44,18 @@ async def findEventById(event_id: str):
         return Event(**event)
     return None
 
+
 async def addUserToEvent(event_id: str, user_id: str):
     result = await eventsCollection.update_one(
         {"_id": ObjectId(event_id)},
-        {"$addToSet": {"invited_users": user_id}}
+        {"$addToSet": {"invited_users": {"user_id": user_id, "status": InvitationStatus.PENDING}}}
     )
 
     return result.modified_count
 
+
 async def findEventsInvitedTo(user_id: str):
-    cursor = eventsCollection.find({"invited_users": user_id})
+    cursor = eventsCollection.find({"invited_users.user_id": user_id})
     events = []
     async for event in cursor:
         events.append(Event(**event))
