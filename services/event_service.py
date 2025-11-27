@@ -1,8 +1,9 @@
 from bson import ObjectId
 
 from repositories.event_repository import createEvent, findEventsByUser, deleteEventById, addUserToEvent, findEventById, \
-    findEventsInvitedTo, updateEvent
+    findEventsInvitedTo, updateEvent, eventsCollection
 from repositories.user_repository import findUserByEmail, usersCollection
+from requests.event_requests import InvitationStatus
 
 
 async def createEventService(eventData: dict):
@@ -91,3 +92,36 @@ def isOrganizer(event, user_id: str):
         event.created_by == user_id or
         user_id in event.collaborators
     )
+
+
+async def updateUserEventStatus(event_id: str, user_id: str, new_status: InvitationStatus) -> bool:
+    """
+    Updates the RSVP status of a specific user in a specific event.
+    Returns True if the user was found and the operation ran, False otherwise.
+    """
+
+    # 1. The Filter Query
+    # We need to find the Event AND the specific user inside the array.
+    filter_query = {
+        "_id": ObjectId(event_id),
+        "invited_users.user_id": user_id
+    }
+
+    # 2. The Update Query
+    # The '$' acts as a placeholder for the index of the user found in the filter_query.
+    # It says: "Update the status of the item you just found in the array"
+    update_query = {
+        "$set": {
+            "invited_users.$.status": new_status
+        }
+    }
+
+    # 3. Execute
+    result = await eventsCollection.update_one(filter_query, update_query)
+
+    # 4. Return Status
+    # matched_count > 0 means the event and user exist.
+    # We check matched_count instead of modified_count because if the user
+    # sends "accepted" when it's already "accepted", modified will be 0,
+    # but the operation was essentially successful.
+    return result.matched_count > 0

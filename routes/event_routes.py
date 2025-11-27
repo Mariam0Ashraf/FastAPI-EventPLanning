@@ -3,7 +3,7 @@ from core.deps import get_current_user
 from requests.event_requests import CreateEventRequest, InviteUserRequest, InviteCollaboratorRequest, \
     UpdateEventAttendance
 from services.event_service import createEventService, getUserEventsService, deleteEventService, inviteUserToEvent, \
-    getInvitedEventsService, inviteCollaborator
+    getInvitedEventsService, inviteCollaborator, updateUserEventStatus
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
@@ -86,12 +86,11 @@ async def set_event_attendance(
         request: UpdateEventAttendance,
         current_user: dict = Depends(get_current_user)
 ):
-    result = await updateUserAttendance(
+    result = await updateUserEventStatus(
         event_id=request.event_id,
         user_id=current_user["user_id"],
+        new_status=request.status
     )
 
-    if "error" in result:
-        return {"error": result["error"]}
-
-    return result
+    return {"message": "Attendance status updated successfully"} if result else {"error": "Unable to update the "
+                                                                                          "attendance status"}
