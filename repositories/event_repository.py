@@ -1,3 +1,5 @@
+from typing import List
+
 from bson import ObjectId
 
 from core.config import db
@@ -38,6 +40,7 @@ async def deleteEventById(event_id: str, user_id: str):
     })
     return result.deleted_count
 
+
 async def findEventById(event_id: str):
     event = await eventsCollection.find_one({"_id": ObjectId(event_id)})
     if event:
@@ -69,3 +72,59 @@ async def updateEvent(event_id: str, update_data: dict):
     )
     updated = await eventsCollection.find_one({"_id": ObjectId(event_id)})
     return Event(**updated)
+
+
+async def search_events(
+        user_id: str,
+        query: str | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        status: InvitationStatus | None = None
+) -> List[Event]:
+    # 1. Base Filter: Start with an empty filter
+    # We will build this up dynamically.
+    mongo_filter = {}
+
+    # 2. Text Search (Title OR Description)
+    if query:
+        # 'i' option makes it case-insensitive
+        mongo_filter["$or"] = [
+            {"title": {"$regex": query, "$options": "i"}},
+            {"description": {"$regex": query, "$options": "i"}}
+        ]
+
+    # 3. Date Range Filter
+    # Assumes 'date' is stored in a comparable format (ISO string or Date object)
+    if start_date or end_date:
+        date_filter = {}
+        if start_date:
+            date_filter["$gte"] = start_date
+        if end_date:
+            date_filter["$lte"] = end_date
+        mongo_filter["date"] = date_filter
+
+    # 4. User Role/Status Filter
+    # This is tricky: "Find events where THIS user has THIS status"
+    if status:
+        # Match events where the 'invited_users' array contains an element
+        # that has BOTH the user_id AND the specific status
+        mongo_filter["invited_users"] = {
+            "$elemMatch": {
+                "user_id": user_id,
+                "status": status
+            }
+        }
+    else:
+        # Default: If no status provided, just ensure the user is invited
+        # (or is the creator, depending on your logic)
+        mongo_filter["$or"] = [
+            {"invited_users.user_id": user_id},
+            {"created_by": user_id}
+        ]
+
+    # 5. Execute Query
+    cursor = eventsCollection.find(mongo_filter)
+    events = await cursor.to_list(length=100)  # Limit to 100 for safety
+
+    # 6. Map to Pydantic Models
+    return [Event(**event) for event in events]

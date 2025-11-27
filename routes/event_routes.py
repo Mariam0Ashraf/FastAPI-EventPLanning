@@ -15,7 +15,7 @@ async def create_event(
 ):
     eventData = {
         "title": request.title,
-        "date": request.date,
+        "date": request.date.isoformat(),
         "time": request.time,
         "location": request.location,
         "description": request.description,
@@ -94,3 +94,4 @@ async def set_event_attendance(
 
     return {"message": "Attendance status updated successfully"} if result else {"error": "Unable to update the "
                                                                                           "attendance status"}
+

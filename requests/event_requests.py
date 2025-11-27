@@ -1,10 +1,12 @@
+import datetime
+
 from pydantic import BaseModel
 from enum import Enum
 
 
 class CreateEventRequest(BaseModel):
     title: str
-    date: str
+    date: datetime.date
     time: str
     location: str
     description: str
@@ -35,3 +37,6 @@ class InviteCollaboratorRequest(BaseModel):
 class UpdateEventAttendance(BaseModel):
     event_id: str
     status: str
+
+class SearchQuery(BaseModel):
+    search: str

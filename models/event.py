@@ -3,6 +3,7 @@ from typing import Optional
 from bson import ObjectId
 from typing_extensions import Annotated
 from typing import List
+from datetime import date
 
 from requests.event_requests import InvitedUser
 
@@ -11,7 +12,7 @@ class Event(BaseModel):
     id: Optional[Annotated[str, BeforeValidator(str)]] = Field(alias="_id", default=None)
 
     title: str
-    date: str
+    date: date
     time: str
     location: str
     description: str
