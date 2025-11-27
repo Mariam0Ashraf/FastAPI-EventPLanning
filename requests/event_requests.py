@@ -1,6 +1,8 @@
 import datetime
+from typing import Annotated
 
-from pydantic import BaseModel
+from fastapi import Query
+from pydantic import BaseModel, Field
 from enum import Enum
 
 
@@ -38,5 +40,27 @@ class UpdateEventAttendance(BaseModel):
     event_id: str
     status: str
 
-class SearchQuery(BaseModel):
-    search: str
+
+class SearchEventRequest(BaseModel):
+    q: str | None = Field(
+        default=None,
+        description="Search term for title or description"
+    )
+
+    # 2. Date Filters
+    start_date: datetime.date | None = Field(
+        default=None,
+        description="Filter events after this date (YYYY-MM-DD)"
+    )
+
+    end_date: datetime.date | None = Field(
+        default=None,
+        description="Filter events before this date (YYYY-MM-DD)"
+    )
+
+    # 3. Enum Filter
+    status: InvitationStatus | None = Field(
+        default=None,
+        description="Filter by your attendance status"
+    )
+

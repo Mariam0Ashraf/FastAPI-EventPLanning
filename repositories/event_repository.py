@@ -1,5 +1,3 @@
-from typing import List
-
 from bson import ObjectId
 
 from core.config import db
@@ -80,7 +78,7 @@ async def search_events(
         start_date: str | None = None,
         end_date: str | None = None,
         status: InvitationStatus | None = None
-) -> List[Event]:
+) -> list[Event]:
     # 1. Base Filter: Start with an empty filter
     # We will build this up dynamically.
     mongo_filter = {}
@@ -98,9 +96,9 @@ async def search_events(
     if start_date or end_date:
         date_filter = {}
         if start_date:
-            date_filter["$gte"] = start_date
+            date_filter["$gte"] = start_date.isoformat()
         if end_date:
-            date_filter["$lte"] = end_date
+            date_filter["$lte"] = end_date.isoformat()
         mongo_filter["date"] = date_filter
 
     # 4. User Role/Status Filter

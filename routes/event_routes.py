@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Query
 from core.deps import get_current_user
 from requests.event_requests import CreateEventRequest, InviteUserRequest, InviteCollaboratorRequest, \
-    UpdateEventAttendance
+    UpdateEventAttendance, SearchEventRequest
 from services.event_service import createEventService, getUserEventsService, deleteEventService, inviteUserToEvent, \
     getInvitedEventsService, inviteCollaborator, updateUserEventStatus
+from repositories.event_repository import search_events
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
@@ -31,6 +34,7 @@ async def get_my_events(current_user: dict = Depends(get_current_user)):
     events = await getUserEventsService(current_user["user_id"])
     return {"events": events}
 
+
 @router.delete("/delete/{event_id}")
 async def delete_event(
     event_id: str,
@@ -42,6 +46,7 @@ async def delete_event(
         return result
 
     return result
+
 
 @router.post("/invite-attendee")
 async def invite_user(
@@ -59,10 +64,12 @@ async def invite_user(
 
     return result
 
+
 @router.get("/invited-to")
 async def invited_events(current_user: dict = Depends(get_current_user)):
     events = await getInvitedEventsService(current_user["user_id"])
     return {"invited_events": events}
+
 
 @router.post("/invite-collaborator")
 async def invite_collaborator(
@@ -95,3 +102,18 @@ async def set_event_attendance(
     return {"message": "Attendance status updated successfully"} if result else {"error": "Unable to update the "
                                                                                           "attendance status"}
 
+
+@router.get("/search")
+async def search_event(
+    request: Annotated[SearchEventRequest, Depends()],
+    current_user: dict = Depends(get_current_user)
+):
+    result = await search_events(
+        user_id=current_user["user_id"],
+        query=request.q,
+        start_date=request.start_date,
+        end_date=request.end_date,
+        status=request.status
+    )
+
+    return result
