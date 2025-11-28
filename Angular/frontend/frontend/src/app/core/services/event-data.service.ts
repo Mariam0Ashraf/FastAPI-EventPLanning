@@ -48,8 +48,8 @@ export class EventsDataService {
   return this.http.get(`${this.api}/events/${eventId}`);
 }
     // INVITE ATTENDEE
+  // INVITE ATTENDEE
   inviteUser(eventId: string, email: string): Observable<any> {
-    // rename or alias inviteAttendee
     return this.http.post(`${this.api}/events/invite-attendee`, { event_id: eventId, email });
   }
 

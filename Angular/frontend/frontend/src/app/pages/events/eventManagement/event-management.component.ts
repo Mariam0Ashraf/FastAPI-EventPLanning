@@ -51,20 +51,55 @@ export class EventManagementComponent implements OnInit {
   }
 
   loadEvents() {
-    this.eventsDataService.getMyEvents().subscribe({
-      next: events => {
-        this.allEvents = events.map(e => ({
-          ...e,
-          id: e.id ?? e._id,
-          created_by: e.created_by ?? e.organizerId,
-        }));
-        this.applyFilters();
-      },
-      error: err => console.error('Failed to load events from service/API', err)
-    });
+  this.eventsDataService.getMyEvents().subscribe({
+    next: events => {
+      // تحويل كل event من backend لشكل EventItem كامل
+      this.allEvents = events.map(e => ({
+        id: e.id ?? e._id,
+        title: e.title,
+        date: e.date,
+        time: e.time ?? '12:00',         // افتراضي لو مفيش
+        location: e.location ?? '',
+        role: e.created_by === this.CURRENT_USER_ID ? 'Organizer' : 'Attendee',
+        created_by: e.created_by ?? e.organizerId,
+        rsvpStatus: e.rsvpStatus ?? ''
+      }));
+
+      // إضافة dummy event
+      const dummyEvent: EventItem = {
+        id: 'dummy1',
+        title: 'Dummy Invited Event',
+        date: '2025-12-31',
+        time: '18:00',
+        location: 'Virtual',
+        role: 'Attendee',
+        created_by: 'someone_else',
+      };
+      this.allEvents.push(dummyEvent);
+
+      this.applyFilters();
+    },
+    error: err => console.error('Failed to load events from service/API', err)
+  });
+}
+
+applyFilters() {
+  let list = [...this.allEvents];
+
+  if (this.searchTerm) {
+    const term = this.searchTerm.toLowerCase();
+    list = list.filter(e => e.title.toLowerCase().includes(term) || e.location.toLowerCase().includes(term));
   }
 
-  applyFilters() {
+  if (this.filterDate) {
+    list = list.filter(e => e.date === this.filterDate);
+  }
+
+  this.filteredMyEvents = list.filter(e => e.created_by === this.CURRENT_USER_ID);
+  this.filteredInvitedEvents = list.filter(e => e.created_by !== this.CURRENT_USER_ID);
+}
+
+  /*applyFilters() {
     let list = [...this.allEvents];
 
     if (this.searchTerm) {
@@ -78,7 +113,7 @@ export class EventManagementComponent implements OnInit {
 
     this.filteredMyEvents = list.filter(e => e.created_by === this.CURRENT_USER_ID);
     this.filteredInvitedEvents = list.filter(e => e.created_by !== this.CURRENT_USER_ID);
-  }
+  }*/
 
   deleteEvent(id: string, eventTitle: string) {
     if (!id) return;
