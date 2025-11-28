@@ -14,10 +14,20 @@
       <mat-form-field appearance="outline" class="w-100">
         <input matInput [(ngModel)]="userEmail" placeholder="Enter user email" />
       </mat-form-field>
+      <!-- Invited Users List -->
+      <h3 class="m-t-20">Invited Users</h3>
+      <div *ngIf="!invitedUsers.length" class="empty">No users invited yet.</div>
+      <!--<ul *ngIf="invitedUsers.length" class="invited-users-list">
+        <li *ngFor="let u of invitedUsers">
+          {{ u.name }} ({{ u.email }})
+          <span class="rsvp-status" [ngClass]="u.status">{{ u.status | titlecase }}</span>
+        </li>
+      </ul>-->
       <button mat-flat-button color="primary" class="full-btn submit-btn" (click)="sendInviteUser()">
         Invite User
       </button>
       <button mat-button class="full-btn back-btn" (click)="goBack()">Back to Events</button>
+
     </div>
 
     <!-- COLLABORATORS TAB -->

@@ -26,7 +26,7 @@ export class InviteUsersComponent implements OnInit {
 
   userEmail = '';
   collabEmail = '';
-
+  invitedUsers: { name: string; email: string; status: string }[] = [];
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -52,6 +52,14 @@ export class InviteUsersComponent implements OnInit {
     });
   }
 */
+  loadInvitedUsers(eventId: string) {
+    this.eventsDataService.getInvitedUsers(eventId).subscribe({
+      next: (users) => this.invitedUsers = users,
+      error: (err) => console.error("Failed to load invited users", err)
+    });
+  }
+  
+
   sendInviteUser() {
     if (!this.eventId || !this.userEmail) return;
     this.eventsDataService.inviteUser(this.eventId, this.userEmail).subscribe({
