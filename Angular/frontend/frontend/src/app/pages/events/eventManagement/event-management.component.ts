@@ -15,7 +15,7 @@ interface EventItem {
   time: string;
   location: string;
   role: 'Organizer' | 'Attendee';
-  rsvpStatus?: string;
+  rsvpStatus?: 'going' | 'not_going' | 'maybe';
   created_by: string;
 }
 
@@ -51,37 +51,37 @@ export class EventManagementComponent implements OnInit {
   }
 
   loadEvents() {
+  // 1. Load my created events
   this.eventsDataService.getMyEvents().subscribe({
-    next: events => {
-      // تحويل كل event من backend لشكل EventItem كامل
-      this.allEvents = events.map(e => ({
+    next: myEventsResponse => {
+      const myEvents = myEventsResponse.map(e => ({
+        ...e,
         id: e.id ?? e._id,
-        title: e.title,
-        date: e.date,
-        time: e.time ?? '12:00',         // افتراضي لو مفيش
-        location: e.location ?? '',
-        role: e.created_by === this.CURRENT_USER_ID ? 'Organizer' : 'Attendee',
         created_by: e.created_by ?? e.organizerId,
-        rsvpStatus: e.rsvpStatus ?? ''
       }));
 
-      // إضافة dummy event
-      const dummyEvent: EventItem = {
-        id: 'dummy1',
-        title: 'Dummy Invited Event',
-        date: '2025-12-31',
-        time: '18:00',
-        location: 'Virtual',
-        role: 'Attendee',
-        created_by: 'someone_else',
-      };
-      this.allEvents.push(dummyEvent);
+      // 2. Load invited events
+      this.eventsDataService.getInvitedEvents().subscribe({
+        next: invitedResp => {
+          const invitedEvents = invitedResp.map(e => ({
+            ...e,
+            id: e.id ?? e._id,
+            created_by: e.created_by ?? e.organizerId,
+          }));
 
-      this.applyFilters();
+          // 3. Combine
+          this.allEvents = [...myEvents, ...invitedEvents];
+
+          this.applyFilters();
+        },
+        error: err => console.error("Failed to load invited events", err)
+      });
     },
-    error: err => console.error('Failed to load events from service/API', err)
+    error: err => console.error("Failed to load my events", err)
   });
 }
+
+
 
 applyFilters() {
   let list = [...this.allEvents];
@@ -129,15 +129,16 @@ applyFilters() {
   this.router.navigate(['/events/invite', eventId]);
 }
 
-rsvp(eventId: string, status: string) {
-  this.eventsDataService.respondToEvent(eventId, status).subscribe({
+rsvp(ev: EventItem, status: 'going' | 'not_going' | 'maybe') {
+  this.eventsDataService.respondToEvent(ev.id, status).subscribe({
     next: () => {
-      alert(`RSVP updated: ${status}`);
-      this.loadEvents();
+      // Update the local RSVP status
+      ev.rsvpStatus = status;
     },
     error: err => console.error("Failed to update RSVP", err)
   });
 }
+
 
     
   goToCreateEvent() {
