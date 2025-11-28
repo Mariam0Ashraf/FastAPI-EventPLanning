@@ -1,0 +1,110 @@
+<div class="events-page">
+
+  <h1 class="title">Event Management</h1>
+
+  <div class="search-filters">
+    <input type="text" 
+           placeholder="Search by name, location..." 
+           [(ngModel)]="searchTerm" 
+           (input)="applyFilters()" 
+           class="search-input">
+    
+    <input type="date"
+           [(ngModel)]="filterDate"
+           (change)="applyFilters()"
+           class="date-input">
+  </div>
+
+  <app-card class="m-t-20">
+
+    <!-- =======================
+         MY EVENTS (Organizer)
+    ======================== -->
+    <h3 class="section-title">My Events (Organizer)</h3>
+
+    <div *ngIf="!filteredMyEvents.length" class="empty">
+      No events created yet matching your search criteria.
+    </div>
+
+    <div *ngFor="let ev of filteredMyEvents" class="event-card">
+
+      <div class="event-content">
+        <h4>{{ ev.title }}</h4>
+        <p>{{ ev.date }} — {{ ev.time }}</p>
+        <p>{{ ev.location }}</p>
+      </div>
+
+      <div class="event-actions">
+
+        <!-- Invite Button -->
+        <button mat-raised-button 
+                color="primary" 
+                (click)="goToInvite(ev.id)">
+          Invite
+        </button>
+
+        
+        <!-- Delete Event -->
+        <button mat-icon-button color="warn" 
+                (click)="deleteEvent(ev.id, ev.title)"
+                title="Delete Event">
+          <mat-icon>delete</mat-icon>
+        </button>
+
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+
+    <!-- =======================
+         INVITED EVENTS (Attendee)
+    ======================== -->
+    <h3 class="section-title">Invited Events (Attendee)</h3>
+
+    <div *ngIf="!filteredInvitedEvents.length" class="empty">
+      No invited events matching your search criteria.
+    </div>
+
+    <div *ngFor="let ev of filteredInvitedEvents" class="event-card">
+
+      <div class="event-content">
+        <h4>{{ ev.title }}</h4>
+        <p>{{ ev.date }} — {{ ev.time }}</p>
+        <p>{{ ev.location }}</p>
+      </div>
+
+      <div class="event-actions">
+
+        <!-- RSVP: Going -->
+        <button mat-button 
+                color="primary"
+                (click)="rsvp(ev.id, 'Going')">
+          Going
+        </button>
+
+        <!-- RSVP: Not Going -->
+        <button mat-button 
+                color="warn"
+                (click)="rsvp(ev.id, 'Not Going')">
+          Not Going
+        </button>
+
+        <button mat-button 
+                color="warn"
+                (click)="rsvp(ev.id, 'May Be')">
+          May Be
+        </button>
+
+      </div>
+    </div>
+
+  </app-card>
+
+  <button mat-fab color="primary"
+          class="fab-btn" 
+          (click)="goToCreateEvent()"
+          title="Create New Event">
+    +
+  </button>
+</div>

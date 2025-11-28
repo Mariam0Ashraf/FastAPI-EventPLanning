@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -20,7 +21,7 @@ export default class LoginComponent {
   password: string = '';
 
   // eslint-disable-next-line @angular-eslint/prefer-inject
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router:Router) {}
 
 
   login() {
@@ -36,10 +37,12 @@ export default class LoginComponent {
 
     console.log('Attempting login with:', loginData);
 
-    this.http.post('http://127.0.0.1:8000/auth/login', loginData).subscribe({
-      next: (res: unknown) => {
+    this.http.post<any>('http://127.0.0.1:8000/auth/login', loginData).subscribe({
+      next: (res) => {
         console.log('Login successful:', res);
+        localStorage.setItem('token', res.access_token);
         alert('Login successful!');
+        this.router.navigate(['/events']);
       },
       error: (err) => {
         console.error('Login failed:', err);
