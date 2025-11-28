@@ -16,8 +16,8 @@
       </mat-form-field>
       <!-- Invited Users List -->
       <h3 class="m-t-20">Invited Users</h3>
-      <div *ngIf="!invitedUsers.length" class="empty">No users invited yet.</div>
-      <!--<ul *ngIf="invitedUsers.length" class="invited-users-list">
+      <!--<div *ngIf="!invitedUsers.length" class="empty">No users invited yet.</div>
+      <ul *ngIf="invitedUsers.length" class="invited-users-list">
         <li *ngFor="let u of invitedUsers">
           {{ u.name }} ({{ u.email }})
           <span class="rsvp-status" [ngClass]="u.status">{{ u.status | titlecase }}</span>
