@@ -2,109 +2,32 @@
   <h1 class="title">Invite Users</h1>
   <h2 class="subtitle">to: {{ eventName }}</h2>
 
-  <!-- TAB SWITCH -->
   <div class="tabs">
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'users'" 
-      (click)="activeTab = 'users'">
-      Invite Attendees
-    </button>
-
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'collabs'" 
-      (click)="activeTab = 'collabs'">
-      Add Collaborators
-    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">Invite Attendees</button>
+    <button class="tab-btn" [class.active]="activeTab === 'collabs'" (click)="activeTab = 'collabs'">Add Collaborators</button>
   </div>
 
   <app-card [padding]="25">
 
     <!-- USERS TAB -->
     <div *ngIf="activeTab === 'users'">
-
-      <!-- Search -->
-      <div class="search-field-group">
-        <label>Search Users</label>
-        <mat-form-field appearance="outline" class="w-100">
-          <input 
-            matInput 
-            [(ngModel)]="searchTerm"
-            (input)="searchUsers()" 
-            placeholder="Search name or email" />
-        </mat-form-field>
-      </div>
-
-      <!-- User List -->
-      <h3 class="section-title">Available Users</h3>
-      <div *ngIf="!filteredUsers.length" class="empty">
-        No users found.
-      </div>
-
-      <div *ngFor="let user of filteredUsers" class="user-card">
-        <div class="user-info">
-          <span class="user-name">{{ user.name }}</span>
-          <span class="user-email">{{ user.email }}</span>
-        </div>
-        
-        <button 
-          mat-flat-button 
-          [color]="user.invited ? 'warn' : 'primary'"
-          (click)="toggleInvite(user)">
-          {{ user.invited ? 'Uninvite' : 'Invite' }}
-        </button>
-      </div>
-
-      <hr class="divider" />
-
-      <button mat-flat-button color="primary" class="full-btn submit-btn" (click)="sendInvites()">
-        Send Invitations & Finish
+      <mat-form-field appearance="outline" class="w-100">
+        <input matInput [(ngModel)]="userEmail" placeholder="Enter user email" />
+      </mat-form-field>
+      <button mat-flat-button color="primary" class="full-btn submit-btn" (click)="sendInviteUser()">
+        Invite User
       </button>
       <button mat-button class="full-btn back-btn" (click)="goBack()">Back to Events</button>
     </div>
 
-
     <!-- COLLABORATORS TAB -->
     <div *ngIf="activeTab === 'collabs'">
-
-      <div class="search-field-group">
-        <label>Search Collaborators</label>
-        <mat-form-field appearance="outline" class="w-100">
-          <input 
-            matInput 
-            [(ngModel)]="collabSearch" 
-            (input)="searchCollabs()" 
-            placeholder="Search by name or email" />
-        </mat-form-field>
-      </div>
-
-      <h3 class="section-title">Collaborators</h3>
-
-      <div *ngIf="!filteredCollabs.length" class="empty">
-        No collaborators found.
-      </div>
-
-      <div *ngFor="let col of filteredCollabs" class="user-card">
-        <div class="user-info">
-          <span class="user-name">{{ col.name }}</span>
-          <span class="user-email">{{ col.email }}</span>
-        </div>
-
-        <button 
-          mat-flat-button 
-          [color]="col.assigned ? 'warn' : 'primary'"
-          (click)="toggleCollaborator(col)">
-          {{ col.assigned ? 'Remove' : 'Assign' }}
-        </button>
-      </div>
-
-      <hr class="divider" />
-
-      <button mat-flat-button color="primary" class="full-btn submit-btn" (click)="saveCollaborators()">
-        Save Collaborators
+      <mat-form-field appearance="outline" class="w-100">
+        <input matInput [(ngModel)]="collabEmail" placeholder="Enter collaborator email" />
+      </mat-form-field>
+      <button mat-flat-button color="primary" class="full-btn submit-btn" (click)="saveCollaborator()">
+        Assign Collaborator
       </button>
-
       <button mat-button class="full-btn back-btn" (click)="goBack()">Back to Events</button>
     </div>
 
