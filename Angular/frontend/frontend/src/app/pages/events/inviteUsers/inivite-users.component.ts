@@ -38,20 +38,20 @@ export class InviteUsersComponent implements OnInit {
       const id = params.get('id');
       if (id) {
         this.eventId = id;
-        this.loadEventName(id);
+        //this.loadEventName(id);
       } else {
         this.router.navigate(['/events']);
       }
     });
   }
 
-  loadEventName(id: string): void {
+  /*loadEventName(id: string): void {
     this.eventsDataService.getEventDetails(id).subscribe({
       next: (event) => this.eventName = event.title,
       error: () => this.eventName = `Event #${id}`
     });
   }
-
+*/
   sendInviteUser() {
     if (!this.eventId || !this.userEmail) return;
     this.eventsDataService.inviteUser(this.eventId, this.userEmail).subscribe({
