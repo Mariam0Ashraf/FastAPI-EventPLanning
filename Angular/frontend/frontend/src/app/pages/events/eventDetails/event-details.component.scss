@@ -1,0 +1,80 @@
+.details-page {
+  padding: 25px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.title {
+  text-align: center;
+  font-size: 26px;
+  color: #444;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.event-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.info {
+  margin: 3px 0;
+  font-size: 15px;
+}
+
+.desc {
+  margin-top: 12px;
+  color: #555;
+  font-size: 15px;
+}
+
+.section-title {
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.divider {
+  margin: 20px 0;
+  border: none;
+  height: 1px;
+  background: rgba(0,0,0,0.1);
+}
+
+.full-btn {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 20px;
+}
+
+.attendee-card {
+  background: #fdfdff;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+}
+
+.status {
+  color: #666;
+}
+
+.response-btns button {
+  margin-right: 10px;
+}
+
+.back-btn {
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 20px;
+}
+.response-btns button.active {
+    background-color: #3f51b5; /* Primary Color */
+    color: white !important;
+    border-color: #3f51b5;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}

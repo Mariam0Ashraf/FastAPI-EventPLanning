@@ -1,0 +1,80 @@
+<div class="details-page">
+
+  <h1 class="title">Event Details</h1>
+
+  <app-card [padding]="25">
+    
+    <div *ngIf="!event">
+      <h2 class="event-title">Loading event details or event not found...</h2>
+      <button mat-button class="back-btn" (click)="goBack()">
+          Back to Events
+      </button>
+    </div>
+
+    <!-- Show details only if event is loaded -->
+    <div *ngIf="event">
+      <!-- Event Basic Info -->
+      <h2 class="event-title">{{ event.title }}</h2>
+
+      <p class="info"><strong>Date:</strong> {{ event.date }}</p>
+      <p class="info"><strong>Time:</strong> {{ event.time }}</p>
+      <p class="info"><strong>Location:</strong> {{ event.location }}</p>
+
+      <p class="desc">{{ event.description }}</p>
+
+      <hr class="divider" />
+
+      <!-- Organizer Tools (Shown only if isOrganizer() is true) -->
+      <div *ngIf="isOrganizer()">
+        <h3 class="section-title">Organizer Tools</h3>
+
+        <button mat-flat-button color="primary" class="full-btn" (click)="inviteUsers()">
+          Invite Users
+        </button>
+
+        <!--<button mat-flat-button color="warn" class="full-btn" (click)="deleteEvent()">
+          Delete Event
+        </button>-->
+
+        <hr class="divider" />
+
+        <h3 class="section-title">Attendees</h3>
+
+        <div *ngIf="!attendees.length" class="empty">No attendees yet.</div>
+
+        <div *ngFor="let a of attendees" class="attendee-card">
+          <span>{{ a.name }}</span>
+          <span class="status">{{ a.status }}</span>
+        </div>
+
+      </div>
+
+      <!-- Attendee Response  -->
+      <div *ngIf="!isOrganizer()">
+        <h3 class="section-title">Your Response</h3>
+        <p class="current-status">Current Status: <strong>{{ currentUserResponse }}</strong></p>
+
+        <div class="response-btns">
+         
+          <button mat-button 
+                  [class.active]="currentUserResponse === 'Going'" 
+                  (click)="respond('Going')">Going</button>
+          
+          <button mat-button 
+                  [class.active]="currentUserResponse === 'Maybe'" 
+                  (click)="respond('Maybe')">Maybe</button>
+          
+          <button mat-button 
+                  [class.active]="currentUserResponse === 'Not Going'" 
+                  (click)="respond('Not Going')">Not Going</button>
+        </div>
+      </div>
+
+      <button mat-button class="back-btn" (click)="goBack()">
+        Back to Events
+      </button>
+    </div>
+
+  </app-card>
+
+</div>

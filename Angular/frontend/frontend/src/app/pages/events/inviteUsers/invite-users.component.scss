@@ -1,0 +1,85 @@
+.invite-page {
+  padding: 25px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.title {
+  text-align: center;
+  font-size: 26px;
+  color: #444;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.search-field-group {
+    margin-bottom: 20px;
+}
+
+.section-title {
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f8fa;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.user-email {
+    font-size: 13px;
+    color: #888;
+}
+
+.full-btn {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 20px;
+}
+
+.submit-btn {
+    margin-top: 20px;
+}
+
+.divider {
+  margin: 20px 0;
+  border: none;
+  height: 1px;
+  background: rgba(0,0,0,0.1);
+}
+
+.empty {
+  color: #888;
+  padding: 10px 0;
+  text-align: center;
+}
