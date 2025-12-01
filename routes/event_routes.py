@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from core.deps import get_current_user
 from requests.event_requests import CreateEventRequest, InviteUserRequest, InviteCollaboratorRequest, \
     UpdateEventAttendance, SearchEventRequest
