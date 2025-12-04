@@ -36,23 +36,43 @@ export class EventsDataService {
     return this.http.delete(`${this.api}/events/delete/${id}`);
   }
 
-  // INVITE ATTENDEE
-  inviteAttendee(eventId: string, email: string): Observable<any> {
-    return this.http.post(`${this.api}/events/invite-attendee`, { event_id: eventId, email });
-  }
+  
 
   // RSVP
   respondToEvent(eventId: string, status: string): Observable<any> {
     return this.http.post(`${this.api}/events/event-attendance`, { event_id: eventId, status });
   }
 
-  // GET EVENT DETAILS
+  /*// GET EVENT DETAILS
   getEventDetails(eventId: string): Observable<any> {
   return this.http.get(`${this.api}/events/${eventId}`);
-}
+}*/
+    // INVITE ATTENDEE
+  // INVITE ATTENDEE
+  inviteUser(eventId: string, email: string): Observable<any> {
+    return this.http.post(`${this.api}/events/invite-attendee`, { event_id: eventId, email });
+  }
+
+  // INVITE COLLABORATOR
+  inviteCollaborator(eventId: string, email: string): Observable<any> {
+    return this.http.post(`${this.api}/events/invite-collaborator`, { event_id: eventId, email });
+  }
+
+  /*// GET ALL USERS
+  getAllUsers(): Observable<{ id: string; name: string; email: string }[]> {
+    return this.http.get<{ id: string; name: string; email: string }[]>(`${this.api}/users/all`);
+  }*/
 
   // GET USER RSVP
   getUserRsvp(eventId: string): Observable<any> {
     return this.http.get(`${this.api}/events/rsvp/${eventId}`);
   }
+
+  getInvitedUsers(eventId: string) {
+  return this.http.get<{ name: string; email: string; status: string }[]>(
+    `${this.api}/events/${eventId}/invited-users`
+  );
+}
+ 
+
 }

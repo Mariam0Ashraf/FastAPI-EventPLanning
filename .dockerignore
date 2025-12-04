@@ -1,0 +1,12 @@
+.gitignore
+.env
+.git
+/venv
+/tests
+/Angular
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.vscode/
+.idea/

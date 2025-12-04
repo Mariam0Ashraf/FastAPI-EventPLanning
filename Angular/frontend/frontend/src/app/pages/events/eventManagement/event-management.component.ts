@@ -15,7 +15,7 @@ interface EventItem {
   time: string;
   location: string;
   role: 'Organizer' | 'Attendee';
-  rsvpStatus?: string;
+  rsvpStatus?: 'going' | 'not_going' | 'maybe';
   created_by: string;
 }
 
@@ -36,14 +36,12 @@ export class EventManagementComponent implements OnInit {
 
   CURRENT_USER_ID: string = '';
 
-  // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(private router: Router, private eventsDataService: EventsDataService) {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         this.CURRENT_USER_ID = payload.sub;
-      // eslint-disable-next-line no-empty
       } catch {}
     }
   }
@@ -53,20 +51,55 @@ export class EventManagementComponent implements OnInit {
   }
 
   loadEvents() {
-    this.eventsDataService.getMyEvents().subscribe({
-      next: events => {
-        this.allEvents = events.map(e => ({
-          ...e,
-          id: e.id ?? e._id,
-          created_by: e.created_by ?? e.organizerId,
-        }));
-        this.applyFilters();
-      },
-      error: err => console.error('Failed to load events from service/API', err)
-    });
+  // 1. Load my created events
+  this.eventsDataService.getMyEvents().subscribe({
+    next: myEventsResponse => {
+      const myEvents = myEventsResponse.map(e => ({
+        ...e,
+        id: e.id ?? e._id,
+        created_by: e.created_by ?? e.organizerId,
+      }));
+
+      // 2. Load invited events
+      this.eventsDataService.getInvitedEvents().subscribe({
+        next: invitedResp => {
+          const invitedEvents = invitedResp.map(e => ({
+            ...e,
+            id: e.id ?? e._id,
+            created_by: e.created_by ?? e.organizerId,
+          }));
+
+          // 3. Combine
+          this.allEvents = [...myEvents, ...invitedEvents];
+
+          this.applyFilters();
+        },
+        error: err => console.error("Failed to load invited events", err)
+      });
+    },
+    error: err => console.error("Failed to load my events", err)
+  });
+}
+
+
+
+applyFilters() {
+  let list = [...this.allEvents];
+
+  if (this.searchTerm) {
+    const term = this.searchTerm.toLowerCase();
+    list = list.filter(e => e.title.toLowerCase().includes(term) || e.location.toLowerCase().includes(term));
   }
 
-  applyFilters() {
+  if (this.filterDate) {
+    list = list.filter(e => e.date === this.filterDate);
+  }
+
+  this.filteredMyEvents = list.filter(e => e.created_by === this.CURRENT_USER_ID);
+  this.filteredInvitedEvents = list.filter(e => e.created_by !== this.CURRENT_USER_ID);
+}
+
+  /*applyFilters() {
     let list = [...this.allEvents];
 
     if (this.searchTerm) {
@@ -80,7 +113,7 @@ export class EventManagementComponent implements OnInit {
 
     this.filteredMyEvents = list.filter(e => e.created_by === this.CURRENT_USER_ID);
     this.filteredInvitedEvents = list.filter(e => e.created_by !== this.CURRENT_USER_ID);
-  }
+  }*/
 
   deleteEvent(id: string, eventTitle: string) {
     if (!id) return;
@@ -96,17 +129,18 @@ export class EventManagementComponent implements OnInit {
   this.router.navigate(['/events/invite', eventId]);
 }
 
-rsvp(eventId: string, status: string) {
-  this.eventsDataService.respondToEvent(eventId, status).subscribe({
+rsvp(ev: EventItem, status: 'going' | 'not_going' | 'maybe') {
+  this.eventsDataService.respondToEvent(ev.id, status).subscribe({
     next: () => {
-      alert(`RSVP updated: ${status}`);
-      this.loadEvents();
+      // Update the local RSVP status
+      ev.rsvpStatus = status;
     },
     error: err => console.error("Failed to update RSVP", err)
   });
 }
 
 
+    
   goToCreateEvent() {
     this.router.navigate(['/events/create']);
   }

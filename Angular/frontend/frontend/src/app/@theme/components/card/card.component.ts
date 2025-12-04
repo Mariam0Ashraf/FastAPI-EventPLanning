@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 })
 export class CardComponent {
   // public props
+  
 
   /**
    * Class to be applied at card level
@@ -63,4 +64,5 @@ export class CardComponent {
    * Template reference for mat-actions at bottom
    */
   @ContentChild('actionTemplate') actionTemplate!: TemplateRef<ElementRef>;
+  
 }

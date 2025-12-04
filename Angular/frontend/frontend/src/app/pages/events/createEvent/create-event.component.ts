@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { CardComponent } from '../../../@theme/components/card/card.component';
-import { EventsDataService } from '../../../core/services/event-data.service';
+import { EventsDataService } from '../../../core/services/event-data.service'; 
 
 @Component({
   selector: 'app-create-event',
@@ -30,7 +30,6 @@ export class CreateEventComponent {
   time = '';
   description = '';
 
-  // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(public router: Router, private eventsDataService: EventsDataService) {}
 
   createEvent() {
@@ -57,7 +56,7 @@ export class CreateEventComponent {
       time: this.time,
       description: this.description,
       created_by: created_by,
-      invited_users: []
+      invited_users: [] 
     };
 
     this.eventsDataService.createEvent(newEventData).subscribe({

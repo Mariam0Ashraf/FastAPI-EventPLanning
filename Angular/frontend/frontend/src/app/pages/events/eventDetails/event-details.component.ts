@@ -38,16 +38,13 @@ export class EventDetailsComponent implements OnInit {
   ];
 
   constructor(
-    // eslint-disable-next-line @angular-eslint/prefer-inject
     private router: Router,
-    // eslint-disable-next-line @angular-eslint/prefer-inject
     private route: ActivatedRoute,
-    // eslint-disable-next-line @angular-eslint/prefer-inject
     private eventsDataService: EventsDataService
   ) {
     const token = localStorage.getItem('token');
     if (token) {
-      try { this.currentUserId = JSON.parse(atob(token.split('.')[1])).sub; } catch { /* empty */ }
+      try { this.currentUserId = JSON.parse(atob(token.split('.')[1])).sub; } catch {}
     }
   }
 
