@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, BeforeValidator
 from typing import Optional
 from bson import ObjectId
-from typing_extensions import Annotated  # Use this for broad compatibility
+from typing_extensions import Annotated
 
 
 
@@ -22,3 +22,4 @@ class User(BaseModel):
         json_encoders = {
             ObjectId: str
         }
+

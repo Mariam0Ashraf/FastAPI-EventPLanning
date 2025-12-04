@@ -1,4 +1,4 @@
-from repositories.user_repository import findUserByEmail, createUser
+from repositories.user_repository import findUserByEmail, createUser, findUserById
 from core.security import hashPassword, checkPassword
 from core.jwt_handler import create_access_token
 import logging
@@ -40,3 +40,14 @@ async def loginUser(email: str, password: str):
             "email": user.email
         }
     }
+
+async def getUserByIdService(user_id: str):
+    user = await findUserById(user_id)
+
+    if not user:
+        return {"error": "User not found", "code": 404}
+
+    user_dict = user.model_dump()
+    user_dict.pop("password", None)
+
+    return user_dict

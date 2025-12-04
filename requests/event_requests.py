@@ -22,7 +22,7 @@ class InvitationStatus(str, Enum):
 
 
 class InvitedUser(BaseModel):
-    user_id: str
+    email: str
     status: InvitationStatus = InvitationStatus.PENDING
 
 
