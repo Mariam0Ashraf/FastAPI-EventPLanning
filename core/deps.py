@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from core.jwt_handler import SECRET_KEY, ALGORITHM
-from services.user_service import getUserByIdService
+from repositories.user_repository import findUserById
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -12,10 +12,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: str = payload.get("sub")
 
-        if user_id is None:
+        user = await findUserById(user_id)
+
+        if user_id is None or user is None:
             raise HTTPException(status_code=401, detail="Invalid token")
 
-        user = await getUserByIdService(user_id)
         return {"user_id": user_id, "user_email": user.email}
 
     except JWTError:

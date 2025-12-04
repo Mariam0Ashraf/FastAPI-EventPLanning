@@ -46,10 +46,10 @@ async def findEventById(event_id: str):
     return None
 
 
-async def addUserToEvent(event_id: str, user_id: str):
+async def addUserToEvent(event_id: str, user_email: str):
     result = await eventsCollection.update_one(
         {"_id": ObjectId(event_id)},
-        {"$addToSet": {"invited_users": {"user_id": user_id, "status": InvitationStatus.PENDING}}}
+        {"$addToSet": {"invited_users": {"user_email": user_email, "status": InvitationStatus.PENDING}}}
     )
 
     return result.modified_count

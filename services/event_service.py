@@ -38,7 +38,7 @@ async def inviteUserToEvent(event_id: str, inviter_id: str, email: str):
     if not invited_user:
         return {"error": "User with this email does not exist", "code": 404}
 
-    updated = await addUserToEvent(event_id, invited_user.id)
+    updated = await addUserToEvent(event_id, invited_user.email)
 
     if updated == 0:
         return {"error": "User already invited or event not found", "code": 400}
@@ -76,7 +76,7 @@ async def inviteCollaborator(event_id: str, inviter_id: str, email: str):
 
     if not invited_user:
         return {"error": "User with this email not found", "code": 404}
-    invited_user_id = str(invited_user.id)
+    invited_user_id = str(invited_user.email)
 
     if invited_user_id in event.collaborators:
         return {"error": "User already a collaborator", "code": 400}

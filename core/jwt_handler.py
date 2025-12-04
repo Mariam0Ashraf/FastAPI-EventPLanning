@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from jose import jwt
 
-load_dotenv("../.env")
+load_dotenv(".env")
 
 SECRET_KEY = os.getenv("APP_SECRET")
 ALGORITHM = "HS256"
