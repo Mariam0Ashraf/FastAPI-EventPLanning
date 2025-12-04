@@ -1,6 +1,9 @@
 from repositories.user_repository import findUserByEmail, createUser
 from core.security import hashPassword, checkPassword
 from core.jwt_handler import create_access_token
+from repositories.user_repository import findUserById
+from bson import ObjectId
+
 import logging
 
 
@@ -40,3 +43,21 @@ async def loginUser(email: str, password: str):
             "email": user.email
         }
     }
+
+async def getUserByIdService(user_id: str):
+    try:
+        user_oid = ObjectId(user_id)
+    except Exception:
+       
+        return {"error": "Invalid User ID format", "code": 404}
+    
+    user = await findUserById(user_id)
+
+
+    if not user:
+        return {"error": "User not found", "code": 404}
+
+    user_dict = user.model_dump()
+    user_dict.pop("password", None)
+
+    return user_dict

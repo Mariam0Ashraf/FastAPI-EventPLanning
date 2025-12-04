@@ -46,14 +46,14 @@ const routes: Routes = [
   },
   
 
-  // ✅ redirect AFTER routes
+  //  redirect AFTER routes
   {
     path: '',
     redirectTo: 'auth/login',
     pathMatch: 'full',
   },
 
-  // ✅ wildcard always LAST
+  //  wildcard always LAST
   {
     path: '**',
     redirectTo: 'auth/login',

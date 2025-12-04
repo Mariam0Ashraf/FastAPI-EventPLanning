@@ -10,3 +10,6 @@ class UserRegisterRequest(BaseModel):
 class UserLoginRequest(BaseModel):
     email: str
     password: str
+
+class UserIdRequest(BaseModel):
+    user_id: str

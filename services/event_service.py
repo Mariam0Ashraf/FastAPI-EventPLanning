@@ -2,7 +2,7 @@ from bson import ObjectId
 
 from repositories.event_repository import createEvent, findEventsByUser, deleteEventById, addUserToEvent, findEventById, \
     findEventsInvitedTo, updateEvent, eventsCollection
-from repositories.user_repository import findUserByEmail, usersCollection
+from repositories.user_repository import findUserByEmail, usersCollection ,findUserById
 from requests.event_requests import InvitationStatus
 
 
@@ -52,6 +52,8 @@ async def getInvitedEventsService(user_id: str):
 
 def getEventWithRole(event, user_id):
     role = "organizer" if event.created_by == user_id else "attendee"
+
+    
     return {
         "id": event.id,
         "title": event.title,
@@ -61,6 +63,7 @@ def getEventWithRole(event, user_id):
         "description": event.description,
         "created_by": event.created_by,
         "invited_users": event.invited_users,
+        "collaborators": event.collaborators,
         "role": role
     }
 

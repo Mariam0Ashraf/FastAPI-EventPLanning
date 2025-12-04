@@ -68,11 +68,7 @@ export class EventsDataService {
     return this.http.get(`${this.api}/events/rsvp/${eventId}`);
   }
 
-  getInvitedUsers(eventId: string) {
-  return this.http.get<{ name: string; email: string; status: string }[]>(
-    `${this.api}/events/${eventId}/invited-users`
-  );
-}
+  
  
 
 }

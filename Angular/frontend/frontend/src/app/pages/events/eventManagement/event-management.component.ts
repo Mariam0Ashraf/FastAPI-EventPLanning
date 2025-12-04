@@ -17,6 +17,8 @@ interface EventItem {
   role: 'Organizer' | 'Attendee';
   rsvpStatus?: 'going' | 'not_going' | 'maybe';
   created_by: string;
+   collaborators?: string[];
+  
 }
 
 @Component({
@@ -33,6 +35,7 @@ export class EventManagementComponent implements OnInit {
   allEvents: EventItem[] = [];
   filteredMyEvents: EventItem[] = [];
   filteredInvitedEvents: EventItem[] = [];
+  filteredCollaboratorEvents: EventItem[] = [];
 
   CURRENT_USER_ID: string = '';
 
@@ -67,6 +70,8 @@ export class EventManagementComponent implements OnInit {
             ...e,
             id: e.id ?? e._id,
             created_by: e.created_by ?? e.organizerId,
+            rsvpStatus: e.invited_users?.find((u: { user_id: string; status: string }) => u.user_id === this.CURRENT_USER_ID)?.status
+
           }));
 
           // 3. Combine
@@ -95,8 +100,12 @@ applyFilters() {
     list = list.filter(e => e.date === this.filterDate);
   }
 
-  this.filteredMyEvents = list.filter(e => e.created_by === this.CURRENT_USER_ID);
-  this.filteredInvitedEvents = list.filter(e => e.created_by !== this.CURRENT_USER_ID);
+  this.filteredMyEvents = list.filter(
+  e => e.created_by === this.CURRENT_USER_ID || e.collaborators?.includes(this.CURRENT_USER_ID)
+);
+this.filteredInvitedEvents = list.filter(
+  e => e.created_by !== this.CURRENT_USER_ID && !e.collaborators?.includes(this.CURRENT_USER_ID)
+);
 }
 
   /*applyFilters() {

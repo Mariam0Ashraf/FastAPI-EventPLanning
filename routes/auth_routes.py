@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from requests.user_requests import UserRegisterRequest, UserLoginRequest
-from services.user_service import registerUser, loginUser
+from services.user_service import registerUser, loginUser, getUserByIdService
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -27,3 +27,13 @@ async def login(request: UserLoginRequest):
         raise HTTPException(status_code=logged_user["code"], detail=logged_user["error"])
 
     return logged_user
+
+@router.get("/{user_id}")
+
+async def get_user_by_id(user_id: str):
+    user = await getUserByIdService(user_id)
+
+    if "error" in user:
+        raise HTTPException(status_code=user["code"], detail=user["error"])
+
+    return user

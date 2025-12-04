@@ -17,3 +17,16 @@ async def createUser(userData: dict):
     result = await usersCollection.insert_one(userData)
     newUser = await usersCollection.find_one({"_id": result.inserted_id})
     return User(**newUser)
+
+async def findUserById(id: str):
+    try:
+        object_id = ObjectId(id)
+    except Exception:
+        return None
+
+    user_dict = await usersCollection.find_one({"_id": object_id})
+
+    if user_dict:
+        return User(**user_dict)
+
+    return None
