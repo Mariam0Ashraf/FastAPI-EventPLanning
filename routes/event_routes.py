@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from core.deps import get_current_user
 from requests.event_requests import CreateEventRequest, InviteUserRequest, InviteCollaboratorRequest, \
-    UpdateEventAttendance, SearchEventRequest
+    UpdateEventAttendance, SearchEventRequest, InvitationStatus
 from services.event_service import createEventService, getUserEventsService, deleteEventService, inviteUserToEvent, \
     getInvitedEventsService, inviteCollaborator, updateUserEventStatus
 from repositories.event_repository import search_events
@@ -22,7 +22,7 @@ async def create_event(
         "time": request.time,
         "location": request.location,
         "description": request.description,
-        "created_by": current_user["user_id"],   # IMPORTANT
+        "created_by": current_user["user_email"],   # IMPORTANT
     }
 
     new_event = await createEventService(eventData)
@@ -31,7 +31,7 @@ async def create_event(
 
 @router.get("/my-events")
 async def get_my_events(current_user: dict = Depends(get_current_user)):
-    events = await getUserEventsService(current_user["user_id"])
+    events = await getUserEventsService(current_user["user_email"])
     return {"events": events}
 
 
@@ -40,7 +40,7 @@ async def delete_event(
     event_id: str,
     current_user: dict = Depends(get_current_user)
 ):
-    result = await deleteEventService(event_id, current_user["user_id"])
+    result = await deleteEventService(event_id, current_user["user_email"])
 
     if "error" in result:
         return result
@@ -55,7 +55,7 @@ async def invite_user(
 ):
     result = await inviteUserToEvent(
         event_id=request.event_id,
-        inviter_id=current_user["user_id"],
+        inviter_id=current_user["user_email"],
         email=request.email
     )
 
@@ -67,7 +67,7 @@ async def invite_user(
 
 @router.get("/invited-to")
 async def invited_events(current_user: dict = Depends(get_current_user)):
-    events = await getInvitedEventsService(current_user["user_id"])
+    events = await getInvitedEventsService(current_user["user_email"])
     return {"invited_events": events}
 
 
@@ -78,7 +78,7 @@ async def invite_collaborator(
 ):
     result = await inviteCollaborator(
         event_id=request.event_id,
-        inviter_id=current_user["user_id"],
+        inviter_id=current_user["user_email"],
         email=request.email
     )
 
@@ -95,8 +95,8 @@ async def set_event_attendance(
 ):
     result = await updateUserEventStatus(
         event_id=request.event_id,
-        user_id=current_user["user_id"],
-        new_status=request.status
+        user_email=current_user["user_email"],
+        new_status=InvitationStatus(request.status)
     )
 
     return {"message": "Attendance status updated successfully"} if result else {"error": "Unable to update the "
@@ -109,7 +109,7 @@ async def search_event(
     current_user: dict = Depends(get_current_user)
 ):
     result = await search_events(
-        user_id=current_user["user_id"],
+        user_email=current_user["user_email"],
         query=request.q,
         start_date=request.start_date,
         end_date=request.end_date,

@@ -10,13 +10,13 @@ async def createEventService(eventData: dict):
     newEvent = await createEvent(eventData)
     return newEvent
 
-async def getUserEventsService(user_id: str):
-    events = await findEventsByUser(user_id)
-    return [getEventWithRole(event, user_id) for event in events]
+async def getUserEventsService(user_email: str):
+    events = await findEventsByUser(user_email)
+    return [getEventWithRole(event, user_email) for event in events]
 
 
-async def deleteEventService(event_id: str, user_id: str):
-    deleted = await deleteEventById(event_id, user_id)
+async def deleteEventService(event_id: str, user_email: str):
+    deleted = await deleteEventById(event_id, user_email)
 
     if deleted == 0:
         return {"error": "Event not found or you do not have permission", "code": 404}
@@ -45,13 +45,13 @@ async def inviteUserToEvent(event_id: str, inviter_id: str, email: str):
 
     return {"message": "User invited successfully"}
 
-async def getInvitedEventsService(user_id: str):
-    events = await findEventsInvitedTo(user_id)
-    return [getEventWithRole(event, user_id) for event in events]
+async def getInvitedEventsService(user_email: str):
+    events = await findEventsInvitedTo(user_email)
+    return [getEventWithRole(event, user_email) for event in events]
 
 
-def getEventWithRole(event, user_id):
-    role = "organizer" if event.created_by == user_id else "attendee"
+def getEventWithRole(event, user_email):
+    role = "organizer" if event.created_by == user_email else "attendee"
     return {
         "id": event.id,
         "title": event.title,
@@ -94,7 +94,7 @@ def isOrganizer(event, user_id: str):
     )
 
 
-async def updateUserEventStatus(event_id: str, user_id: str, new_status: InvitationStatus) -> bool:
+async def updateUserEventStatus(event_id: str, user_email: str, new_status: InvitationStatus) -> bool:
     """
     Updates the RSVP status of a specific user in a specific event.
     Returns True if the user was found and the operation ran, False otherwise.
@@ -104,7 +104,7 @@ async def updateUserEventStatus(event_id: str, user_id: str, new_status: Invitat
     # We need to find the Event AND the specific user inside the array.
     filter_query = {
         "_id": ObjectId(event_id),
-        "invited_users.user_id": user_id
+        "invited_users.user_email": user_email
     }
 
     # 2. The Update Query

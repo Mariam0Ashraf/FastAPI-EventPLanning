@@ -13,11 +13,11 @@ async def createEvent(eventData: dict):
     return Event(**newEvent)
 
 
-async def findEventsByUser(user_id: str):
+async def findEventsByUser(user_email: str):
     cursor = eventsCollection.find({
         "$or": [
-            {"created_by": user_id},
-            {"collaborators": user_id}
+            {"created_by": user_email},
+            {"collaborators": user_email}
         ]
     })
 
@@ -28,12 +28,12 @@ async def findEventsByUser(user_id: str):
     return events
 
 
-async def deleteEventById(event_id: str, user_id: str):
+async def deleteEventById(event_id: str, user_email: str):
     result = await eventsCollection.delete_one({
         "_id": ObjectId(event_id),
         "$or": [
-            {"created_by": user_id},
-            {"collaborators": user_id}
+            {"created_by": user_email},
+            {"collaborators": user_email}
         ]
     })
     return result.deleted_count
@@ -55,8 +55,8 @@ async def addUserToEvent(event_id: str, user_id: str):
     return result.modified_count
 
 
-async def findEventsInvitedTo(user_id: str):
-    cursor = eventsCollection.find({"invited_users.user_id": user_id})
+async def findEventsInvitedTo(user_email: str):
+    cursor = eventsCollection.find({"invited_users.user_email": user_email})
     events = []
     async for event in cursor:
         events.append(Event(**event))
@@ -73,7 +73,7 @@ async def updateEvent(event_id: str, update_data: dict):
 
 
 async def search_events(
-        user_id: str,
+        user_email: str,
         query: str | None = None,
         start_date: str | None = None,
         end_date: str | None = None,
@@ -105,10 +105,10 @@ async def search_events(
     # This is tricky: "Find events where THIS user has THIS status"
     if status:
         # Match events where the 'invited_users' array contains an element
-        # that has BOTH the user_id AND the specific status
+        # that has BOTH the user_email AND the specific status
         mongo_filter["invited_users"] = {
             "$elemMatch": {
-                "user_id": user_id,
+                "user_email": user_email,
                 "status": status
             }
         }
@@ -116,8 +116,8 @@ async def search_events(
         # Default: If no status provided, just ensure the user is invited
         # (or is the creator, depending on your logic)
         mongo_filter["$or"] = [
-            {"invited_users.user_id": user_id},
-            {"created_by": user_id}
+            {"invited_users.user_email": user_email},
+            {"created_by": user_email}
         ]
 
     # 5. Execute Query
