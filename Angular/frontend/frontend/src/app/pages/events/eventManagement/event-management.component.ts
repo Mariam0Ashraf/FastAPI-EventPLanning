@@ -54,6 +54,7 @@ export class EventManagementComponent implements OnInit {
   }
 
   loadEvents() {
+    
   // 1. Load my created events
   this.eventsDataService.getMyEvents().subscribe({
     next: myEventsResponse => {
@@ -147,7 +148,7 @@ rsvp(ev: EventItem, status: 'going' | 'not_going' | 'maybe') {
     error: err => console.error("Failed to update RSVP", err)
   });
 }
-
+  
 
     
   goToCreateEvent() {

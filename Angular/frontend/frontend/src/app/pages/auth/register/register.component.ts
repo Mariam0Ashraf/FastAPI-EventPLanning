@@ -6,6 +6,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { Router } from '@angular/router';
+import { environment } from 'src/environment/environment';
 
 @Component({
   selector: 'app-register',
@@ -23,6 +24,7 @@ export default class RegisterComponent {
   email = new FormControl('', [Validators.required, Validators.email]);
   password: string = '';
   confirmPassword: string = '';
+  private api = environment.apiUrl;
 
 
 
@@ -49,13 +51,13 @@ export default class RegisterComponent {
       username: this.username,
       email: this.email.value,
       password: this.password,
-
+      confirmPassword: this.confirmPassword
     };
 
     console.log('Registering user:', userData);
 
     // Send to FastAPI backend
-    this.http.post('http://127.0.0.1:8000/auth/register', userData).subscribe({
+    this.http.post(`${this.api}/auth/register`, userData).subscribe({
       next: (res: unknown) => {
         console.log('Registration successful:', res);
         alert(`Registered successfully`);
@@ -63,7 +65,11 @@ export default class RegisterComponent {
       },
       error: (err) => {
         console.error('Registration failed:', err);
-        alert('Registration failed. Check console for details.');
+        const msg =
+          err.error?.detail ||
+          err.error?.message ||
+          'Registration failed. Check console.';
+        alert(msg);
       }
     });
   }

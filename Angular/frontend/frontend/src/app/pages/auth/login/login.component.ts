@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from 'src/environment/environment';
+
 
 
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -19,16 +21,18 @@ export default class LoginComponent {
   hide = true;
   email: string = '';
   password: string = '';
+    private api = environment.apiUrl;
+
 
   // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(private http: HttpClient, private router:Router) {}
 
 
   login() {
-    if (!this.email || !this.password) {
+    /*if (!this.email || !this.password) {
       alert('Please fill in both email and password.');
       return;
-    }
+    }*/
 
     const loginData = {
       email: this.email,
@@ -37,7 +41,7 @@ export default class LoginComponent {
 
     console.log('Attempting login with:', loginData);
 
-    this.http.post<any>('http://127.0.0.1:8000/auth/login', loginData).subscribe({
+    this.http.post<any>(`${this.api}/auth/login`, loginData).subscribe({
       next: (res) => {
         console.log('Login successful:', res);
         localStorage.setItem('token', res.access_token);
@@ -46,8 +50,13 @@ export default class LoginComponent {
       },
       error: (err) => {
         console.error('Login failed:', err);
+        if (err.error?.detail) {
+        alert(err.error.detail);
+      } else {
         alert('Invalid email or password.');
       }
+    }
+      
     });
   }
 }

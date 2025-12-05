@@ -68,6 +68,19 @@ export class EventsDataService {
     return this.http.get(`${this.api}/events/rsvp/${eventId}`);
   }
 
+  searchEvents(query: string, startDate?: string, endDate?: string, status?: string) {
+  const params: any = { q: query };
+  
+  if (startDate) params.start_date = startDate;
+  if (endDate) params.end_date = endDate;
+  if (status) params.status = status;
+
+  return this.http
+    .get<{ events: any[] }>(`${this.api}/events/search`, { params })
+    .pipe(
+      map(res => res.events) // Assuming backend returns { events: [...] }
+    );
+}
   
  
 
