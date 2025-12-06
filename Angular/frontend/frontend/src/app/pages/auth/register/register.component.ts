@@ -44,10 +44,20 @@ export default class RegisterComponent {
 
   //  Registration logic
   register() {
-    if (this.password !== this.confirmPassword) {
-      alert('Passwords do not match!');
-      return;
-    }
+    if (this.password.length < 8) {
+    alert('Password must be at least 8 characters long!');
+    return;
+  }
+
+  if (this.password.includes(' ')) {
+    alert('Password cannot contain spaces!');
+    return;
+  }
+
+  if (this.password !== this.confirmPassword) {
+    alert('Passwords do not match!');
+    return;
+  }
 
     const userData = {
       username: this.username,
