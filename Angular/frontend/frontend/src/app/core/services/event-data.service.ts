@@ -6,8 +6,8 @@ import { environment } from '../../../environment/environment';
 
 @Injectable({ providedIn: 'root' })
 export class EventsDataService {
-  private api = environment.apiUrl;
-
+  //private api = environment.apiUrl;
+ private api = (window as any).__env.apiUrl;
   constructor(private http: HttpClient) {}
 
   // CREATE EVENT

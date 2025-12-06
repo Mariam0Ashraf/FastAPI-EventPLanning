@@ -28,8 +28,8 @@ export class InviteUsersComponent implements OnInit {
 
   userEmail = '';
   collabEmail = '';
-  invitedUsers: { user_id: string; email?: string; status: string }[] = [];
-  collaborators: { user_id: string; email?: string }[] = [];
+  invitedUsers: { user_email: string; status: string }[] = [];
+  collaborators: {user_email: string }[] = [];
 
   constructor(
     private router: Router,
@@ -58,58 +58,53 @@ export class InviteUsersComponent implements OnInit {
       const event = events.find(e => e.id === eventId);
       if (!event) return;
 
-      
       this.eventName = event.title;
+
+      // invited_users already contain emails
       this.invitedUsers = event.invited_users || [];
+
+      // collaborators contains array of emails
       this.loadCollaborators(event);
 
-    
+      // both functions now simplified because backend sends emails directly
       await this.loadInvitedUsersEmails();
       await this.loadCollaboratorsEmails();
-
     }
   });
 }
 
-  loadCollaborators(event: any) {
-    if (event.collaborators && event.collaborators.length) {
-      this.collaborators = event.collaborators.map((userId: string) => ({ user_id: userId }));
-    } else {
-      this.collaborators = [];
-    }
-  }
+loadCollaborators(event: any) {
+  // 
+  const rawCollabs = event.collaborators || [];
+  console.log('Raw collaborators from event:', rawCollabs);
 
-  
-  async loadInvitedUsersEmails() {
-  if (!this.invitedUsers.length) return;
-
-  this.invitedUsers = await Promise.all(
-    this.invitedUsers.map(async u => {
-      try {
-        console.log("Fetching user by ID:", u.user_id);
-        const user = await firstValueFrom(this.usersDataService.getUserById(u.user_id));
-        return { ...u, email: user.email };
-      } catch {
-        return { ...u, email: u.user_id };
-      }
-    })
-  );
+  this.collaborators = rawCollabs.map((email: string) => ({
+    user_email: email
+  }));
 }
 
-  async loadCollaboratorsEmails() {
-    if (!this.collaborators.length) return;
 
-    this.collaborators = await Promise.all(
-      this.collaborators.map(async c => {
-        try {
-          const user = await firstValueFrom(this.usersDataService.getUserById(c.user_id));
-          return { ...c, email: user.email };
-        } catch {
-          return { ...c, email: c.user_id }; // fallback
-        }
-      })
-    );
-  }
+
+async loadInvitedUsersEmails() {
+  if (!this.invitedUsers.length) return;
+
+  // invited_users.user_id = email because backend now sends email
+  this.invitedUsers = this.invitedUsers.map(u => ({
+    ...u,
+    email: u.user_email   
+  }));
+}
+
+async loadCollaboratorsEmails() {
+  if (!this.collaborators.length) return;
+
+  // collaborators already contain emails → no need for lookup
+  this.collaborators = this.collaborators.map(c => ({
+    ...c,
+    email: c.user_email  // user_id is email
+  }));
+}
+
 
 
   sendInviteUser() {

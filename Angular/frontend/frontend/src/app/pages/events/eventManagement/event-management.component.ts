@@ -17,7 +17,7 @@ interface EventItem {
   role: 'Organizer' | 'Attendee';
   rsvpStatus?: 'going' | 'not_going' | 'maybe';
   created_by: string;
-   collaborators?: string[];
+  collaborators?: string[];
   
 }
 
@@ -44,7 +44,7 @@ export class EventManagementComponent implements OnInit {
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        this.CURRENT_USER_ID = payload.sub;
+        this.CURRENT_USER_ID = payload.email;
       } catch {}
     }
   }
@@ -54,7 +54,6 @@ export class EventManagementComponent implements OnInit {
   }
 
   loadEvents() {
-    
   // 1. Load my created events
   this.eventsDataService.getMyEvents().subscribe({
     next: myEventsResponse => {
@@ -71,8 +70,8 @@ export class EventManagementComponent implements OnInit {
             ...e,
             id: e.id ?? e._id,
             created_by: e.created_by ?? e.organizerId,
-            rsvpStatus: e.invited_users?.find((u: { user_id: string; status: string }) => u.user_id === this.CURRENT_USER_ID)?.status
-
+            rsvpStatus: e.invited_users?.find((u: { user_email: string; status: string }) => u.user_email === this.CURRENT_USER_ID)?.status
+            
           }));
 
           // 3. Combine
@@ -148,7 +147,7 @@ rsvp(ev: EventItem, status: 'going' | 'not_going' | 'maybe') {
     error: err => console.error("Failed to update RSVP", err)
   });
 }
-  
+
 
     
   goToCreateEvent() {

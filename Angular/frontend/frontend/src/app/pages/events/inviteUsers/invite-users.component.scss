@@ -83,3 +83,33 @@
   padding: 10px 0;
   text-align: center;
 }
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  background: #f0f0f5;
+  color: #555;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: #e0e0eb;
+}
+
+.tab-btn.active {
+  background: #4a90e2;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}

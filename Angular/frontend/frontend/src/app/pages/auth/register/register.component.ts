@@ -24,8 +24,10 @@ export default class RegisterComponent {
   email = new FormControl('', [Validators.required, Validators.email]);
   password: string = '';
   confirmPassword: string = '';
-  private api = environment.apiUrl;
-
+  //private api = environment.apiUrl;
+  private api = (window as any).__env.apiUrl;
+   //private api = (window as any).__env.apiUrl;
+   //private api = "http://localhost:8434";
 
 
 
@@ -57,6 +59,7 @@ export default class RegisterComponent {
     console.log('Registering user:', userData);
 
     // Send to FastAPI backend
+    console.log("Test the Base New URI will be Test New : " + this.api);
     this.http.post(`${this.api}/auth/register`, userData).subscribe({
       next: (res: unknown) => {
         console.log('Registration successful:', res);

@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: mongo:6.0
+    container_name: db
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    volumes:
+      - dbv:/data/db
+    networks:
+      - net
+
+  backend:
+    image: tonyelia03/fastapi-backend:latest
+    container_name: backend
+    environment:
+      DATABASE_URI: mongodb://admin:admin123@db:27017
+      APP_SECRET: MY-SECRET
+      DATABASE_NAME: event_planning
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - net
+
+  frontend:
+    build:
+      context: ./  
+    image: frontend-im
+    container_name: frontend
+    environment:
+      API_URL: http://localhost:8000
+    ports:
+      - "4204:80"
+    depends_on:
+      - backend
+    networks:
+      - net
+
+volumes:
+  dbv:
+
+networks:
+  net:

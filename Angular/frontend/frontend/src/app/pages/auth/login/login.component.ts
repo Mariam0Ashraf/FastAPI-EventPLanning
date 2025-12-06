@@ -21,8 +21,8 @@ export default class LoginComponent {
   hide = true;
   email: string = '';
   password: string = '';
-    private api = environment.apiUrl;
-
+    //private api = environment.apiUrl;
+  private api = (window as any).__env.apiUrl;
 
   // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(private http: HttpClient, private router:Router) {}
