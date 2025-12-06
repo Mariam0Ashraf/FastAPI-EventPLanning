@@ -61,6 +61,7 @@ def getEventWithRole(event, user_email):
         "description": event.description,
         "created_by": event.created_by,
         "invited_users": event.invited_users,
+        "collaborators": event.collaborators,
         "role": role
     }
 
